@@ -7,12 +7,33 @@ interface User {
   email: string;
 }
 
+type QueryParams = {
+  email?: string;
+  name?: string;
+  createdAt?: Date;
+};
+
+type InsertParams = {
+  name: string;
+  email: string;
+  createdAt: Date;
+};
+
 const uri = process.env.MONGODB_URI as string;
 const client = new MongoClient(uri);
 
 export async function query(
+  operation: "find",
+  params: QueryParams
+): Promise<User[]>;
+export async function query(
+  operation: "insert",
+  params: InsertParams
+): Promise<User[] | void>;
+
+export async function query(
   operation: "find" | "insert",
-  params: any
+  params: QueryParams | InsertParams
 ): Promise<User[] | void> {
   try {
     await client.connect();
@@ -20,10 +41,10 @@ export async function query(
     const collection = db.collection<User>("users");
 
     if (operation === "find") {
-      const users = await collection.find(params).toArray();
+      const users = await collection.find(params as QueryParams).toArray();
       return users;
     } else if (operation === "insert") {
-      await collection.insertOne(params);
+      await collection.insertOne(params as InsertParams);
     }
   } catch (error) {
     console.error("MongoDB query error:", error);

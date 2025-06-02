@@ -5,10 +5,13 @@ import { addUser } from "@/app/add-user/actions";
 import type { FormState } from "@/types";
 
 export default function AddUserForm() {
-  const [state, action, isPending] = useActionState(addUser, {
-    message: "",
-    success: false,
-  });
+  const [state, action, isPending] = useActionState<FormState, FormData>(
+    addUser,
+    {
+      message: "",
+      success: false,
+    }
+  );
 
   return (
     <div className="max-w-md mx-auto p-6">
