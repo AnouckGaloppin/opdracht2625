@@ -15,17 +15,16 @@ export async function addUser(
   const email = formData.get("email") as string;
 
   try {
-    const existingUsers = await query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
-    if (existingUsers.length > 0) {
+    const existingUsers = await query("find", { email });
+
+    if (existingUsers && existingUsers.length > 0) {
       return {
         message: "Email bestaat al!",
         success: false,
       };
     }
 
-    await query("INSERT INTO users (name, email) VALUES (?, ?)", [name, email]);
+    await query("insert", { name, email, createdAt: new Date() });
 
     return {
       message: "Gebruiker succesvol toegevoegd!",
